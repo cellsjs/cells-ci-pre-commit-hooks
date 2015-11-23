@@ -40,14 +40,18 @@ var createOne = function(folder) {
 
 				fs.exists(finalFile, function(result) {
 					if (result) {
-						logger.error("File " + finalFile + " already found, aborting");
-						return;
+						logger.warn("File " + finalFile + " already found, writting anyway");
 					}
 					fs.copy(
 						path.normalize(__dirname + "/hooks/pre-commit"), 
 						finalFile, 
+						{clobber: true},
 						function(err) {
-							logger.error("Problem creating file " + finalFile);
+							if (err) {
+								logger.error("Problem creating file " + finalFile, err);
+							} else {
+								logger.info("Updating hook " + finalFile);
+							}
 						}
 					)
 				})
