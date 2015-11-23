@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var fs = require("fs-extra");
 var path = require("path");
 
@@ -61,14 +63,17 @@ var createMany = function(folder) {
 			return;
 		}
 		list.forEach(function(file) {
-			fs.stat(file, function(err, stats) {
+			var currentFolder = folder + "/" + file;
+
+//			logger.info (folder + "/" + file)
+			fs.stat(currentFolder, function(err, stats) {
 				if (err) {
-					logger.error('Cannot stat file ' + file);
+					logger.error('Cannot stat file ' + currentFolder, err);
 					return;
 				}
 				if (stats.isDirectory()) {
-					createOne(file);
-					createMany(file);
+					createOne(currentFolder);
+					createMany(currentFolder);
 				}
 			});
 		})
@@ -82,7 +87,8 @@ module.export = {
 
 if (require.main == module) {
 	var folder = process.cwd();
-	fs.exists('./.git', function(result) {
+	var gitFolder = folder + '/.git';
+	fs.exists(gitFolder, function(result) {
 		// repository exists, trying to create one
 		if (result == true) {
 			createOne(folder);

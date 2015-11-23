@@ -10,6 +10,9 @@
     "pre-commit",
     "hook"
   ],
+  "bin": {
+    "cells-hooks": "index.js"
+  },
   "author": "Jose Manuel <biaggi@gmail.com>",
   "license": "ISC",
   "dependencies": {
