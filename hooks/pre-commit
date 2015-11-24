@@ -1,2 +1,16 @@
+#/bin/sh
 cells --component:lint
+R=$?
+if [ R != 0 ]
+        then
+	echo $R
+        exit $R
+fi
+
 cells --component:coverage
+R=$?
+if [ R != 0 ]
+        then
+	echo $R
+        exit $R
+fi
