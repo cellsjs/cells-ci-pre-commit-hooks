@@ -14,6 +14,7 @@ var logger = bunyan.createLogger({
     {stream: prettyStdOut}
 ]});
 
+var fileName = 'pre-push';
 
 var createOne = function(folder) {
 	//check that the folder exists
@@ -26,7 +27,7 @@ var createOne = function(folder) {
 
 		fs.exists(path.normalize(folder + "/.git"), function(result) {
 			if (result == false) {
-				logger.error("No repository .git found in folder  " + folder);
+				logger.warn("No repository .git found in folder  " + folder);
 				return;
 			}
 			var hooksPath = path.normalize(folder + "/.git/hooks");
@@ -36,14 +37,14 @@ var createOne = function(folder) {
 					return;
 				}
 	
-				var finalFile = path.normalize(hooksPath + '/pre-commit');
+				var finalFile = path.normalize(hooksPath + '/' + fileName);
 
 				fs.exists(finalFile, function(result) {
 					if (result) {
 						logger.warn("File " + finalFile + " already found, writting anyway");
 					}
 					fs.copy(
-						path.normalize(__dirname + "/hooks/pre-commit"), 
+						path.normalize(__dirname + "/hooks/" + fileName), 
 						finalFile, 
 						{clobber: true},
 						function(err) {
@@ -67,6 +68,11 @@ var createMany = function(folder) {
 			return;
 		}
 		list.forEach(function(file) {
+			if (file == 'node_modules' 
+				|| file == 'bower_components'
+				|| file == '.git') {
+				return;
+			}
 			var currentFolder = folder + "/" + file;
 
 //			logger.info (folder + "/" + file)

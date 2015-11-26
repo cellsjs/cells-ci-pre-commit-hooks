@@ -14,3 +14,11 @@ if [ R != 0 ]
 	echo $R
         exit $R
 fi
+
+cells --component:test-demo
+R=$?
+if [ R != 0 ]
+        then
+	echo $R
+        exit $R
+fi
