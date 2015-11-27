@@ -1,24 +1,24 @@
 #/bin/sh
-cells --component:lint
+cells component:lint
 R=$?
-if [ R != 0 ]
+if [ $R != 0 ]
         then
-	echo $R
+	echo "Error found in lint task with exit code " $R
         exit $R
 fi
 
-cells --component:coverage
+cells component:coverage
 R=$?
-if [ R != 0 ]
+if [ $R != 0 ]
         then
-	echo $R
+	echo "Error found in coverage task with exit code " $R
         exit $R
 fi
 
-cells --component:test-demo
+cells component:test-demo
 R=$?
-if [ R != 0 ]
+if [ $R != 0 ]
         then
-	echo $R
+	echo "Error found in demo check task with exit code " $R
         exit $R
 fi

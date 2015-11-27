@@ -3,7 +3,7 @@
 find . -iname .git |
 while read filename
 do
-	hook="${filename}/hooks/pre-commit"
+	hook="${filename}/hooks/pre-push"
 	echo $hook;
 
 	if [ -f $hook ] 
@@ -11,6 +11,8 @@ do
 		echo "ok"
 	else
 		echo "nak"
+		exit 1		
 		break
 	fi
 done 
+exit 0

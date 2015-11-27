@@ -16,7 +16,55 @@ var logger = bunyan.createLogger({
 
 var fileName = 'pre-push';
 
-var createOne = function(folder) {
+var minimist = require('minimist')(process.argv.slice(2));
+
+var help = function() {
+	console.log('show a nice help here');
+}
+
+
+var _add = function(file) {
+	fs.exists(file, function(result) {
+		if (result) {
+			logger.warn("File " + file + " already found, writting anyway");
+		}
+		fs.copy(
+			path.normalize(__dirname + "/hooks/" + fileName), 
+			file, 
+			{clobber: true},
+			function(err) {
+				if (err) {
+					logger.error("Problem creating file " + file, err);
+				} else {
+					logger.info("Updating hook " + file);
+				}
+			}
+		)
+	})
+}
+
+var _remove = function(file) {
+	fs.exists(file, function(result) {
+		if (result) {
+			fs.unlink(
+				file, 
+				function(err) {
+					if (err) {
+						logger.error("Problem removing hook " + file, err);
+					} else {
+						logger.info("Removing hook " + file);
+					}
+				}
+			)
+		} else {
+			logger.warn("File " + file + " not found, skipping");
+			return;
+		}
+	})
+
+}
+
+var modifyOne = function(folder, flag) {
 	//check that the folder exists
 	fs.exists(folder, function(result) {
 		//check also that .git exists and hook inside
@@ -38,30 +86,21 @@ var createOne = function(folder) {
 				}
 	
 				var finalFile = path.normalize(hooksPath + '/' + fileName);
+				if (flag == 'add') {
+					_add(finalFile);
+				} else
+				if (flag == 'remove') {
+					_remove(finalFile);
+				} else {
+					console.log('WTF!')
+				}
 
-				fs.exists(finalFile, function(result) {
-					if (result) {
-						logger.warn("File " + finalFile + " already found, writting anyway");
-					}
-					fs.copy(
-						path.normalize(__dirname + "/hooks/" + fileName), 
-						finalFile, 
-						{clobber: true},
-						function(err) {
-							if (err) {
-								logger.error("Problem creating file " + finalFile, err);
-							} else {
-								logger.info("Updating hook " + finalFile);
-							}
-						}
-					)
-				})
 			});
 		});
 	});
 }
 
-var createMany = function(folder) {
+var modifyMany = function(folder, flag) {
 	fs.readdir(folder, function (err, list) {
 		if (err) {
 			logger.error("Cannot read path ", folder);
@@ -82,8 +121,8 @@ var createMany = function(folder) {
 					return;
 				}
 				if (stats.isDirectory()) {
-					createOne(currentFolder);
-					createMany(currentFolder);
+					modifyOne(currentFolder, flag);
+					modifyMany(currentFolder, flag);
 				}
 			});
 		})
@@ -91,20 +130,34 @@ var createMany = function(folder) {
 }
 
 module.export = {
-	createOne: createOne,
-	createMany: createMany
+	modifyOne: modifyOne,
+	modifyMany: modifyMany
 }
 
 if (require.main == module) {
+
+	var options = {add: false, remove: false};
+	minimist._.forEach(function(item) {
+		if (item == 'add' || item == 'remove') {
+			options[item] = true;
+		}
+	})
+
+	if ((options.add && options.remove) || !(options.add || options.remove)) {
+		help();
+		return;
+	}
+
+	var flag = options.add ? 'add' : 'remove';
 	var folder = process.cwd();
 	var gitFolder = folder + '/.git';
 	fs.exists(gitFolder, function(result) {
-		// repository exists, trying to create one
+		// repository exists, trying to modify one
 		if (result == true) {
-			createOne(folder);
+			modifyOne(folder, flag);
 			return;
 		}
-		// otherwise try to create many
-		createMany(folder);
+		// otherwise try to modify many
+		modifyMany(folder, flag);
 	})
 }
