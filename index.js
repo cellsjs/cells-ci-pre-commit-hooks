@@ -2,6 +2,7 @@
 
 var fs = require("fs-extra");
 var path = require("path");
+var chalk = require("chalk");
 
 var PrettyStream = require('bunyan-prettystream');
 var bunyan = require("bunyan")
@@ -19,7 +20,15 @@ var fileName = 'pre-push';
 var minimist = require('minimist')(process.argv.slice(2));
 
 var help = function() {
-	console.log('show a nice help here');
+    console.log("\n\t" + 
+      chalk.bold("Name") + ": cells-hooks - utility to install pre-push hook in all repositories");
+    console.log("\t" + 
+      chalk.bold("Synopsis") + ": cells-hooks add|remove");
+    console.log("\t" + 
+      chalk.bold("Options descriptions:"));
+    console.log("\t\tadd                  Add the hook to all repositories recursively")
+    console.log("\t\tremove               Remove the hook from all repositories recursively")
+    console.log("\n")
 }
 
 
