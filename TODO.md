@@ -1,3 +1,3 @@
 ## TODO list
 
-* add a hook that checks if a descinet repository is well formed and set the module as private
+* add a hook that checks if a repository is well formed in packages 
