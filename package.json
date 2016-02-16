@@ -1,6 +1,6 @@
 {
   "name": "cells-ci-pre-commit-hooks",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Command to install pre-commit hooks in one or many repositories",
   "main": "index.js",
   "scripts": {
