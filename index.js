@@ -138,7 +138,7 @@ var modifyMany = function(folder, flag) {
 	})
 }
 
-module.export = {
+module.exports = {
 	modifyOne: modifyOne,
 	modifyMany: modifyMany
 }
