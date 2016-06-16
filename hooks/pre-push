@@ -1,5 +1,5 @@
 #/bin/sh
-cells component:lint
+cells component::lint
 R=$?
 if [ $R != 0 ]
         then
@@ -7,15 +7,15 @@ if [ $R != 0 ]
         exit $R
 fi
 
-cells component:coverage
+cells component::unit-tests
 R=$?
 if [ $R != 0 ]
         then
-	echo "Error found in coverage task with exit code " $R
+	echo "Error found in unit tests task with exit code " $R
         exit $R
 fi
 
-cells component:test-demo
+cells component::demo-tests
 R=$?
 if [ $R != 0 ]
         then
